@@ -1,5 +1,7 @@
 package com.managerslog.app;
 import android.app.*;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.*;
 import android.net.Uri;
 import android.os.*;
@@ -12,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class MainActivity extends Activity {
  WebView web; ValueCallback<Uri[]> photoCallback; static final int PHOTO=1,FOLDER=2,RESTORE=3;
  Handler main=new Handler(Looper.getMainLooper());
- @Override public void onCreate(Bundle b){super.onCreate(b);web=new WebView(this);setContentView(web);WebSettings s=web.getSettings();s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);web.setWebViewClient(new WebViewClient());web.setWebChromeClient(new WebChromeClient(){@Override public boolean onShowFileChooser(WebView w,ValueCallback<Uri[]> cb,FileChooserParams p){photoCallback=cb;Intent i=new Intent(Intent.ACTION_GET_CONTENT);i.setType("image/*");startActivityForResult(Intent.createChooser(i,"Choose photo"),PHOTO);return true;}});web.addJavascriptInterface(new Bridge(),"Android");web.loadUrl("file:///android_asset/index.html");}
+ @Override public void onCreate(Bundle b){super.onCreate(b);web=new WebView(this);setContentView(web);WebSettings s=web.getSettings();s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);web.setWebViewClient(new WebViewClient());web.setWebChromeClient(new WebChromeClient(){@Override public boolean onShowFileChooser(WebView w,ValueCallback<Uri[]> cb,FileChooserParams p){photoCallback=cb;Intent i=new Intent(Intent.ACTION_GET_CONTENT);i.setType("image/*");startActivityForResult(Intent.createChooser(i,"Choose photo"),PHOTO);return true;}});web.addJavascriptInterface(new Bridge(),"Android");web.loadUrl("file:///android_asset/index.html");if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},55);}
  @Override protected void onResume(){super.onResume();if(web!=null)web.evaluateJavascript("window.onAppResume&&onAppResume()",null);}
  void msg(String s){main.post(()->Toast.makeText(this,s,Toast.LENGTH_LONG).show());}
  @Override protected void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(req==PHOTO){if(photoCallback!=null){photoCallback.onReceiveValue(result==RESULT_OK&&data!=null?new Uri[]{data.getData()}:null);photoCallback=null;}return;}if(result!=RESULT_OK||data==null)return;Uri u=data.getData();if(req==FOLDER){try{getContentResolver().takePersistableUriPermission(u,Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);getPreferences(0).edit().putString("folder",u.toString()).apply();web.evaluateJavascript("window.backupNow&&backupNow()",null);}catch(Exception e){msg("Folder access failed");}}if(req==RESTORE){try(InputStream in=getContentResolver().openInputStream(u)){ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buf=new byte[8192];int n;while((n=in.read(buf))!=-1)out.write(buf,0,n);String json=out.toString("UTF-8");new JSONObject(json);web.evaluateJavascript("restoreData("+JSONObject.quote(json)+")",null);}catch(Exception e){msg("Restore failed");}}}
