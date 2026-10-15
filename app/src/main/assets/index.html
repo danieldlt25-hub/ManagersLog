@@ -56,6 +56,12 @@ function renderReferenceNotesList(){let v=el('referenceList');if(!v)return;let f
 function copyReferenceNote(id){let n=state.referenceNotes.find(x=>x.id===id);if(n&&navigator.clipboard)navigator.clipboard.writeText(n.details).then(()=>toast('Copied')).catch(()=>toast('Copy unavailable'))}
 function deleteReferenceNote(id){if(!confirm('Delete this note?'))return;state.referenceNotes=state.referenceNotes.filter(n=>n.id!==id);save()}
 
+
+function openReferenceNote(id){refEditId=id||null;let n=state.referenceNotes.find(x=>x.id===id);el('refHeading').textContent=n?'Edit Note':'Add Note';el('refTitle').value=n?.title||'';el('refDetails').value=n?.details||'';updateReferenceCategories(n?.category||'General');el('referenceEditor').showModal()}
+function updateReferenceCategories(selected){el('refCategory').innerHTML=state.noteCategories.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('');el('refCategory').value=selected}
+function addReferenceCategory(){let n=prompt('New category name');if(n===null)return;n=n.trim();if(!n)return toast('Enter category name');let existing=state.noteCategories.find(c=>c.toLowerCase()===n.toLowerCase());if(existing)n=existing;else{state.noteCategories.push(n);save()}updateReferenceCategories(n)}
+function saveReferenceNote(){let title=el('refTitle').value.trim();if(!title)return toast('Enter a title');let data={title,details:el('refDetails').value.trim(),category:el('refCategory').value};if(refEditId){let n=state.referenceNotes.find(x=>x.id===refEditId);if(n)Object.assign(n,data)}else state.referenceNotes.unshift({id:crypto.randomUUID(),...data});el('referenceEditor').close();save()}
+
 function department(v){let arr=notes().filter(n=>n.dept===deptView).sort((a,b)=>Number(!!a.done)-Number(!!b.done)||Number(!!b.priority)-Number(!!a.priority)||b.created-a.created);v.innerHTML='<button class="secondary" onclick="screen=\'\';render()">‹ Departments</button><h2>'+esc(deptView)+'</h2><div class="card" style="margin-top:12px">'+arr.map(row).join('')+'</div>'}
 function startWalk(){let id=crypto.randomUUID();state.walks.push({id,name:'Store Walk — '+day(),created:Date.now(),ended:null});state.activeWalk=id;save()}
 function renameWalk(name){let w=state.walks.find(x=>x.id===state.activeWalk);if(w){w.name=name.trim()||w.name;save()}}
