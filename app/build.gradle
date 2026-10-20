@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.managerslog.app'
     compileSdk 35
-    defaultConfig { applicationId 'com.managerslog.app'; minSdk 26; targetSdk 35; versionCode 5; versionName '1.2.2' }
+    defaultConfig { applicationId 'com.managerslog.app'; minSdk 26; targetSdk 35; versionCode 6; versionName '1.2.3' }
     signingConfigs { release { storeFile file(System.getenv('HOME') + '/.android/release.keystore'); storePassword System.getenv('CLIMBING_STORE_PASSWORD'); keyAlias System.getenv('CLIMBING_KEY_ALIAS'); keyPassword System.getenv('CLIMBING_KEY_PASSWORD') } }
     buildTypes { release { signingConfig signingConfigs.release; minifyEnabled false; shrinkResources false } }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
