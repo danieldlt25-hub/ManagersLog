@@ -50,6 +50,23 @@ nav{border-radius:0;box-shadow:none;background:var(--card);border-top:1px solid 
 .home-actions{margin:16px 0 20px}.home-actions button{min-height:50px;font-size:14px}.home-actions button:first-child{flex:1.2}.home-actions button.secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .page-heading h2{margin-bottom:0}.page-subtitle{font-size:13px;margin:3px 0 0}.section-heading h3{margin-bottom:10px}.filter-strip{display:flex;gap:7px;margin-bottom:12px}.filter-strip button{flex:1;background:var(--card);border:1px solid var(--line);color:var(--sub);min-height:40px}.filter-strip button.selected{background:var(--soft);color:var(--accent);border-color:var(--accent);font-weight:700}
 .department-link{min-height:54px!important;padding:11px 14px!important;font-size:15px!important;margin-bottom:7px}#editor .editor-fields{padding:16px 17px 8px}#editor .editor-footer{padding:10px 16px max(12px,env(safe-area-inset-bottom))}
+
+/* Corporate navy-and-blue visual theme */
+:root{--bg:#f3f6fa;--card:#fff;--ink:#182b43;--sub:#66778b;--accent:#0865d8;--line:#dce5ef;--soft:#e9f1fc}
+body.dark{--bg:#101a2a;--card:#1a293c;--ink:#f1f5fb;--sub:#a6b7ca;--accent:#70adff;--line:#34465e;--soft:#253b56}
+header{background:#142a43;color:#f6f9ff;border-bottom:1px solid #243d59}
+header h1{color:#fff}header button.secondary{background:#213c5a;color:#fff;border-color:#36516f}
+nav,body.dark nav{background:#142a43;border-top:1px solid #2a405a}
+nav button{color:#c4d0e0}nav button.active{color:#77b6ff;background:#203c5c}
+button:not(.secondary):not(.danger){background:#0865d8;color:#fff}
+button.secondary{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.home-actions button:first-child{background:#0865d8;color:#fff}
+.home-actions button.secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.filter-strip button{background:var(--card);color:var(--sub);border:1px solid var(--line)}
+.filter-strip button.selected{background:var(--soft);color:var(--accent);border-color:var(--accent)}
+#editor #saveButton{background:#0865d8;color:#fff}
+#editor .priority-star.selected{background:var(--soft)}
+.walk-tag{background:var(--soft);color:var(--accent)}
 </style></head><body><header><h1>Manager's Log</h1><button class="secondary" onclick="screen='Settings';render()">⚙</button></header><main id="view"></main><nav id="nav"></nav><div id="toast"></div>
 <dialog id="editor"><div class="editor-fields"><div class="row"><h2 id="editorTitle">Add Task</h2><div class="editor-heading-actions"><button id="priorityStar" type="button" class="secondary priority-star" onclick="togglePriority()" aria-label="Mark priority" aria-pressed="false">☆</button><button class="secondary" onclick="closeEditor()" aria-label="Close">×</button></div></div><label>Category</label><select id="dept"></select><label>Task</label><textarea id="body" placeholder="Enter task details..."></textarea><label>Photo</label><input type="file" id="photo" accept="image/*" capture="environment" style="display:none"><div class="photo-actions"><button class="secondary" onclick="el('photo').click()" type="button">◉ Take Photo</button><button class="secondary" id="removePhoto" onclick="photoData=null;el('photo').value='';showPhoto()" type="button">Remove Photo</button></div><img id="preview" class="photo" style="display:none"></div><div class="editor-footer"><button class="secondary" onclick="saveEditor(false)" id="saveSingle">Save</button><button onclick="saveEditor(true)" id="saveButton">Save + Next</button><button class="danger" onclick="deleteEditing()" id="deleteButton">Delete</button></div></dialog>
 <dialog id="referenceEditor"><h2 id="refHeading">Add Note</h2><label>Title</label><input id="refTitle" placeholder="Note title"><label>Category</label><div class="row"><select id="refCategory"></select><button type="button" class="secondary" onclick="addReferenceCategory()" aria-label="Add category">+</button></div><label>Details</label><textarea id="refDetails" rows="5" placeholder="Enter note details..."></textarea><label>Photos</label><input type="file" id="refPhoto" accept="image/*" capture="environment" style="display:none"><button type="button" class="secondary" onclick="el('refPhoto').click()">Take Photo</button><div id="refPhotos" class="photo-actions" style="flex-wrap:wrap;margin-top:10px"></div><div class="actions" style="margin-top:16px"><button onclick="saveReferenceNote()">Save Note</button><button class="secondary" onclick="document.getElementById('referenceEditor').close()">Cancel</button></div></dialog><script>
