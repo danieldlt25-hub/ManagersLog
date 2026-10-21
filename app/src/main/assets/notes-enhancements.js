@@ -9,3 +9,14 @@ function renderNotes(v){v.innerHTML='<h2>Notes</h2><button class="task-fab" oncl
 window.Notes={toggle:id=>{expanded.has(id)?expanded.delete(id):expanded.add(id);renderList()},search:q=>{refSearch=q;cursor=0;renderList()},jump,clear:()=>{refSearch='';cursor=0;renderNotes(el('view'))}};
 renderReferenceNotes=renderNotes;renderReferenceNotesList=renderList;
 })();
+(function(){
+const tags=new Set(['B','STRONG','I','EM','U','UL','OL','LI','P','DIV','BR','H3','SPAN','MARK']);
+function sanitize(html){let doc=new DOMParser().parseFromString('<div>'+html+'</div>','text/html'),root=doc.body.firstElementChild;
+function visit(el){for(let c of [...el.childNodes]){if(c.nodeType===1){if(!tags.has(c.tagName)){let fragment=doc.createDocumentFragment();while(c.firstChild)fragment.appendChild(c.firstChild);c.replaceWith(fragment);visit(el);continue}let highlight=c.style.backgroundColor;for(let a of [...c.attributes])c.removeAttribute(a.name);if(highlight&&/255,\s*240,\s*154/.test(highlight))c.style.backgroundColor='#fff09a';visit(c)}else if(c.nodeType!==3)c.remove()}}visit(root);return root.innerHTML}
+function plain(html){let d=document.createElement('div');d.innerHTML=sanitize(html);return d.innerText||d.textContent||''}
+function open(id){refEditId=id||null;let n=state.referenceNotes.find(x=>x.id===id);el('refHeading').textContent=n?'Edit Note':'Add Note';el('refTitle').value=n?.title||'';el('refDetails').innerHTML=n?.richHtml?sanitize(n.richHtml):esc(n?.details||'').replace(/\n/g,'<br>');refPhotoDraft=[...(n?.photos||[])];renderRefPhotos();updateReferenceCategories(n?.category||'General');el('referenceEditor').showModal()}
+function saveNote(){let title=el('refTitle').value.trim();if(!title)return toast('Enter a title');let richHtml=sanitize(el('refDetails').innerHTML),data={title,details:plain(richHtml),richHtml,category:el('refCategory').value,photos:[...refPhotoDraft]};if(refEditId){let n=state.referenceNotes.find(x=>x.id===refEditId);if(n)Object.assign(n,data)}else state.referenceNotes.unshift({id:crypto.randomUUID(),...data});el('referenceEditor').close();save()}
+window.noteFormat=(cmd,value)=>{el('refDetails').focus();document.execCommand(cmd,false,value||null)};
+window.noteSanitize=sanitize;
+openReferenceNote=open;saveReferenceNote=saveNote;
+})();
