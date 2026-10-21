@@ -2,8 +2,8 @@
 (function(){
 const depts=['total','produce','meat','deli','bakery','grocery','drug'];
 const labels=['Total Store','Produce','Meat','Deli','Bakery','Grocery','Drug/GM'];
-let mode='sales',selected='total',daily=false,editing=null;
-function db(){return state.metrics ||= {weeks:[],days:[]}}
+let mode='sales',selected='total',editing=null;
+function db(){return state.metrics ||= {weeks:[]}}
 function fmt(x,unit){return x==null?'—':(unit==='$'?'$':'')+Number(x).toLocaleString('en-US',{maximumFractionDigits:1})+(unit==='%'?'%':'')}
 function chart(rows,key,unit){rows=rows.filter(r=>r[key]!=null);if(!rows.length)return '<p class="muted">No records yet</p>';let nums=rows.map(r=>Number(r[key])),min=Math.min(...nums),max=Math.max(...nums);if(max===min){max+=1;min-=1}let pts=nums.map((n,i)=>[25+(rows.length===1?.5:i/(rows.length-1))*285,120-100*(n-min)/(max-min)]);return '<svg viewBox="0 0 340 150" style="width:100%" role="img" aria-label="Trend graph"><polyline fill="none" stroke="#438b99" stroke-width="3" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>'+pts.map((p,i)=>'<circle r="4" fill="#438b99" cx="'+p[0]+'" cy="'+p[1]+'"><title>'+rows[i].week+': '+fmt(nums[i],unit)+'</title></circle><text x="'+p[0]+'" y="140" text-anchor="middle" fill="currentColor" font-size="9">'+rows[i].week.slice(5)+'</text>').join('')+'</svg>'}
 function show(){let w=[...db().weeks].sort((a,b)=>a.week.localeCompare(b.week)),last=w.at(-1),prior=w.at(-2),k=selected;let h='<div class="row"><h2>Metrics</h2><button onclick="Metrics.form()">+ Add Week</button></div><div class="metrics-switch"><button onclick="Metrics.mode('+"'sales'"+')" class="'+(mode==='sales'?'':'secondary')+'">Sales</button><button onclick="Metrics.mode('+"'labor'"+')" class="'+(mode==='labor'?'':'secondary')+'">Labor</button></div>';
@@ -17,9 +17,7 @@ function form(week){editing=week||null;let r=db().weeks.find(x=>x.week===week);e
 function value(id){let s=el(id).value.trim();return s===''?null:Number(s)}
 function saveWeek(){let week=el('mw').value;if(!week)return toast('Choose a week');if(db().weeks.some(r=>r.week===week&&r.week!==editing))return toast('Week already exists');let sales={},id={};for(let d of depts){sales[d]=value('s'+d);id[d]=value('i'+d);if(sales[d]!=null&&(!Number.isFinite(sales[d])||sales[d]<0))return toast('Invalid sales')}let ot=value('ot'),pe=value('pe');if([ot,pe,...Object.values(id)].some(x=>x!=null&&!Number.isFinite(x))||ot!=null&&ot<0)return toast('Invalid number');db().weeks=db().weeks.filter(r=>r.week!==editing);db().weeks.push({week,sales,id,ot,pe});save()}
 function remove(week){if(!confirm('Delete week '+week+'?'))return;db().weeks=db().weeks.filter(r=>r.week!==week);save()}
-function dayForm(){el('view').innerHTML='<button class="secondary" onclick="Metrics.show()">‹ Back</button><h2>Daily Sales</h2><label>Date</label><input id="md" type="date"><label>Sales ($)</label><input id="mv" type="number" min="0"><button onclick="Metrics.saveDay()">Save</button>'}
-function saveDay(){let date=el('md').value,sales=value('mv');if(!date||sales==null||sales<0||!Number.isFinite(sales))return toast('Invalid daily sales');db().days=db().days.filter(d=>d.date!==date);db().days.push({date,sales});save()}
-window.Metrics={show,form,saveWeek,remove,dayForm,saveDay,mode:m=>{mode=m;show()},select:k=>{selected=k;show()},daily:b=>{daily=b;show()}};
+window.Metrics={show,form,saveWeek,remove,mode:m=>{mode=m;show()},select:k=>{selected=k;show()}};
 const original=render;render=function(){original();let n=el('nav');n.insertAdjacentHTML('beforeend',"<button onclick=\"go('Metrics')\" class=\""+(tab==='Metrics'?'active':'')+"\"><span class=\"navicon\">▥</span>Metrics</button>");if(tab==='Metrics'&&!screen)show()};
 db();render();
 })();
