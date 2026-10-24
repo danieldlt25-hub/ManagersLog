@@ -18,7 +18,7 @@ main h3{font-size:16px;letter-spacing:-.012em;margin:20px 0 11px}
 .filter-strip button.selected{border-color:#7f9bb6!important}
 .task-fab{right:18px!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;min-height:50px!important;padding:0 21px!important;border-radius:26px!important;font-size:14px!important;background:var(--polish-blue)!important;box-shadow:0 5px 18px #0004!important}
 nav,body.dark nav{background:var(--polish-navy)!important;border-top:1px solid #40536a!important}
-nav button{min-height:67px!important;padding:9px 2px 7px!important;font-size:11px!important;font-weight:650!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav button{min-height:57px!important;padding:9px 2px 7px!important;font-size:11px!important;font-weight:650!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 nav button .navicon{font-size:20px!important;line-height:1.1;margin:0!important}
 nav button.active{background:#38516c!important;color:#fff!important}
 .metrics-switch{gap:10px!important;margin:14px 0 16px!important}
