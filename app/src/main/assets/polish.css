@@ -10,7 +10,7 @@ main h3{font-size:16px;letter-spacing:-.012em;margin:20px 0 11px}
 .card{border-radius:var(--polish-radius)!important;padding:14px 16px!important;margin-bottom:12px!important;border-color:var(--line)!important}
 .task-list{padding:3px 16px!important;margin-top:12px!important}
 .item{padding:10px 0!important;gap:13px!important;min-height:65px;align-items:center!important}
-.item .content{font-size:15px!important;font-weight:550!important;line-height:1.45!important;white-space:pre-wrap;min-width:0}
+.item .content{font-size:14px!important;font-weight:550!important;line-height:1.45!important;white-space:pre-wrap;min-width:0}
 .item small{font-size:12px!important;line-height:1.55!important;margin-top:3px;color:var(--sub)}
 .item input[type=checkbox]{width:21px!important;height:21px!important;min-width:21px!important;margin:0 2px!important;align-self:center}
 .filter-strip{gap:8px!important;margin:0 0 12px!important}
