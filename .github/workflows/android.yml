@@ -21,10 +21,21 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build debug APK
-        run: gradle :app:assembleDebug --no-daemon
+      - name: Restore release signing key
+        env:
+          CLIMBING_KEYSTORE: ${{ secrets.CLIMBING_KEYSTORE }}
+        run: |
+          test -n "$CLIMBING_KEYSTORE"
+          mkdir -p "$HOME/.android"
+          printf '%s' "$CLIMBING_KEYSTORE" | base64 --decode > "$HOME/.android/release.keystore"
+      - name: Build signed release APK
+        env:
+          CLIMBING_STORE_PASSWORD: ${{ secrets.CLIMBING_STORE_PASSWORD }}
+          CLIMBING_KEY_ALIAS: ${{ secrets.CLIMBING_KEY_ALIAS }}
+          CLIMBING_KEY_PASSWORD: ${{ secrets.CLIMBING_KEY_PASSWORD }}
+        run: gradle :app:assembleRelease --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: ManagersLog-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: ManagersLog-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
